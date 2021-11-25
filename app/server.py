@@ -9,8 +9,8 @@ from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import HTMLResponse, JSONResponse
 from starlette.staticfiles import StaticFiles
 
-export_file_url = 'https://www.dropbox.com/s/jatevp36pk0hyj6/export.pkl?raw=1'
-export_file_name = 'export.pkl'
+export_file_url = 'https://www.dropbox.com/s/ow6dnrm077ohcl2/LgtRgs_model.pkl?raw=1'
+export_file_name = 'LgtRgs_model.pkl'
 
 classes = ['class4','class5','class6','class7','class8','class9','class10','class11','class12','class13','class14','class15']
 path = Path(__file__).parent
