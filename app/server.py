@@ -9,8 +9,8 @@ from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import HTMLResponse, JSONResponse
 from starlette.staticfiles import StaticFiles
 
-export_file_url = 'https://www.dropbox.com/s/ow6dnrm077ohcl2/LgtRgs_model.pkl?raw=1'
-export_file_name = 'LgtRgs_model.pkl'
+export_file_url = 'https://www.dropbox.com/s/3y5xorm7rq8fzby/model_Lgt.pkl?raw=1'
+export_file_name = 'model_Lgt.pkl'
 
 classes = ['class4','class5','class6','class7','class8','class9','class10','class11','class12','class13','class14','class15']
 path = Path(__file__).parent
@@ -41,7 +41,6 @@ async def setup_learner():
             raise RuntimeError(message)
         else:
             raise
-
 
 loop = asyncio.get_event_loop()
 tasks = [asyncio.ensure_future(setup_learner())]
