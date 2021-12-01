@@ -8,6 +8,8 @@ from starlette.applications import Starlette
 from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import HTMLResponse, JSONResponse
 from starlette.staticfiles import StaticFiles
+import models.ml.classifier as clf
+from pickle import load
 
 export_file_url = 'https://www.dropbox.com/s/3y5xorm7rq8fzby/model_Lgt.pkl?raw=1'
 export_file_name = 'model_Lgt.pkl'
@@ -32,8 +34,8 @@ async def download_file(url, dest):
 async def setup_learner():
     await download_file(export_file_url, path / export_file_name)
     try:
-        learn = load_learner(path, export_file_name)
-        return learn
+        clf.model = load(path, export_file_name)
+        return clf.model
     except RuntimeError as e:
         if len(e.args) > 0 and 'CPU-only machine' in e.args[0]:
             print(e)
@@ -44,7 +46,7 @@ async def setup_learner():
 
 loop = asyncio.get_event_loop()
 tasks = [asyncio.ensure_future(setup_learner())]
-learn = loop.run_until_complete(asyncio.gather(*tasks))[0]
+clf.model = loop.run_until_complete(asyncio.gather(*tasks))[0]
 loop.close()
 
 
@@ -59,7 +61,7 @@ async def analyze(request):
     img_data = await request.form()
     img_bytes = await (img_data['file'].read())
     img = open_image(BytesIO(img_bytes))
-    prediction = learn.predict(img)[0]
+    prediction = clf.model.predict(img)[0]
     return JSONResponse({'result': str(prediction)})
 
 
