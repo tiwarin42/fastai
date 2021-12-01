@@ -31,10 +31,10 @@ async def download_file(url, dest):
 
 
 async def setup_learner():
-    await download_file(export_file_url, path / export_file_name)
+    model = await download_file(export_file_url, path / export_file_name)
     try:
-        model = load(path, export_file_name)
-        return model
+        models = model
+        return models
     except RuntimeError as e:
         if len(e.args) > 0 and 'CPU-only machine' in e.args[0]:
             print(e)
