@@ -10,6 +10,7 @@ from starlette.responses import HTMLResponse, JSONResponse
 from starlette.staticfiles import StaticFiles
 import pickle
 from PIL import Image
+import tensorflow as tf
 
 # export_file_url = 'https://www.dropbox.com/s/3y5xorm7rq8fzby/model_Lgt.pkl?raw=1'
 # export_file_name = 'model_Lgt.pkl'
@@ -79,7 +80,8 @@ async def analyze(request):
     if img.mode != "RGB":
         print(img.mode)
         img = img.convert("RGB")
-    img_array = img.reshape(1, -1)
+
+    img_array = tf.keras.preprocessing.image.img_to_array(img).reshape(1, -1)
     prediction = model.predict(img_array)
     category = classNames[prediction[0]]
     return JSONResponse({'result': category})
