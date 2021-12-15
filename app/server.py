@@ -46,7 +46,7 @@ app.mount('/static', StaticFiles(directory='app/static'))
 
 
 async def setup_learner():
-    with open('app/models/model_Lgt.pkl', 'rb') as file:
+    with open('app/models/test.pkl', 'rb') as file:
          model = pickle.load(file)
     try:
         models = model
