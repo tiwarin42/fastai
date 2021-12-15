@@ -11,7 +11,6 @@ from starlette.staticfiles import StaticFiles
 import pickle
 from PIL import Image
 import tensorflow as tf
-import cv2
 import numpy as np
 
 # export_file_url = 'https://www.dropbox.com/s/3y5xorm7rq8fzby/model_Lgt.pkl?raw=1'
