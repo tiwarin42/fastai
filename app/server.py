@@ -11,6 +11,8 @@ from starlette.staticfiles import StaticFiles
 import pickle
 from PIL import Image
 import tensorflow as tf
+import cv2
+import numpy as np
 
 # export_file_url = 'https://www.dropbox.com/s/3y5xorm7rq8fzby/model_Lgt.pkl?raw=1'
 # export_file_name = 'model_Lgt.pkl'
@@ -75,11 +77,12 @@ async def homepage(request):
 async def analyze(request):
     img_data = await request.form()
     img_bytes = await (img_data['file'].read())
-    img = Image.open(BytesIO(img_bytes)).resize((64, 64))
-
-    if img.mode != "RGB":
-        print(img.mode)
-        img = img.convert("RGB")
+    
+    img = Image.open(BytesIO(img_bytes)).resize((64, 64)).convert('RGB')
+    open_cv_image = np.array(img)
+    # Convert RGB to BGR
+    open_cv_image = open_cv_image[:, :, ::-1].copy()
+    img = open_cv_image
 
     img_array = tf.keras.preprocessing.image.img_to_array(img).reshape(1, -1)
     prediction = model.predict(img_array)
