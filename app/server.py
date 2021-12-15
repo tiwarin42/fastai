@@ -8,12 +8,26 @@ from starlette.applications import Starlette
 from starlette.middleware.cors import CORSMiddleware
 from starlette.responses import HTMLResponse, JSONResponse
 from starlette.staticfiles import StaticFiles
-from pickle import load
+import pickle
+from PIL import Image
 
-export_file_url = 'https://www.dropbox.com/s/3y5xorm7rq8fzby/model_Lgt.pkl?raw=1'
-export_file_name = 'model_Lgt.pkl'
+# export_file_url = 'https://www.dropbox.com/s/3y5xorm7rq8fzby/model_Lgt.pkl?raw=1'
+# export_file_name = 'model_Lgt.pkl'
 
-classes = ['class4','class5','class6','class7','class8','class9','class10','class11','class12','class13','class14','class15']
+classNames = {4: 'class4',
+              5: 'class5',
+              6: 'class6',
+              7: 'class7',
+              8: 'class8',
+              9: 'class9',
+              10: 'class10',
+              11: 'class11',
+              12: 'class12',
+              13: 'class13',
+              14: 'class14',
+              15: 'class15'}
+              
+# classes = ['class4','class5','class6','class7','class8','class9','class10','class11','class12','class13','class14','class15']
 path = Path(__file__).parent
 
 app = Starlette()
@@ -21,17 +35,17 @@ app.add_middleware(CORSMiddleware, allow_origins=['*'], allow_headers=['X-Reques
 app.mount('/static', StaticFiles(directory='app/static'))
 
 
-async def download_file(url, dest):
-    if dest.exists(): return
-    async with aiohttp.ClientSession() as session:
-        async with session.get(url) as response:
-            data = await response.read()
-            with open(dest, 'wb') as f:
-                f.write(data)
+# async def download_file(url, dest):
+#     if dest.exists(): return
+#     async with aiohttp.ClientSession() as session:
+#         async with session.get(url) as response:
+#             data = await response.read()
+#             with open(dest, 'wb') as f:
+#                 f.write(data)
 
 
 async def setup_learner():
-    model = await download_file(export_file_url, path / export_file_name)
+    model = pickle.load('app/models/model_Lgt.pkl')
     try:
         models = model
         return models
@@ -59,10 +73,15 @@ async def homepage(request):
 async def analyze(request):
     img_data = await request.form()
     img_bytes = await (img_data['file'].read())
-    img = open_image(BytesIO(img_bytes))
-    prediction = model.predict(img)[0]
-    return JSONResponse({'result': str(prediction)})
+    img = Image.open(BytesIO(img_bytes)).resize((64, 64))
 
+    if img.mode != "RGB":
+        print(img.mode)
+        img = img.convert("RGB")
+    img_array = img.reshape(1, -1)
+    prediction = predict_model.predict(img_array)
+    category = classNames[predictions[0]]
+    return JSONResponse({'result': category})
 
 if __name__ == '__main__':
     if 'serve' in sys.argv:
