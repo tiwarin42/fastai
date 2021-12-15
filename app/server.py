@@ -26,7 +26,7 @@ classNames = {4: 'class4',
               13: 'class13',
               14: 'class14',
               15: 'class15'}
-              
+
 # classes = ['class4','class5','class6','class7','class8','class9','class10','class11','class12','class13','class14','class15']
 path = Path(__file__).parent
 
@@ -79,8 +79,8 @@ async def analyze(request):
         print(img.mode)
         img = img.convert("RGB")
     img_array = img.reshape(1, -1)
-    prediction = predict_model.predict(img_array)
-    category = classNames[predictions[0]]
+    prediction = model.predict(img_array)
+    category = classNames[prediction[0]]
     return JSONResponse({'result': category})
 
 if __name__ == '__main__':
